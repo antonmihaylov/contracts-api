@@ -5,6 +5,8 @@ import { getProfile } from './middleware/getProfile'
 import type { Models } from './models'
 import { sequelize } from './models/Sequelize'
 
+import 'express-async-errors'
+
 const app = express()
 app.use(bodyParser.json())
 
