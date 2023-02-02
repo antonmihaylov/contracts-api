@@ -1,6 +1,5 @@
 .DS_STORE
 database.sqlite3
-dist/
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/webstorm,node

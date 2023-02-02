@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "es2021",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "composite": false,
+    "lib": ["es2021"],
+    "pretty": true,
+    "allowJs": true,
+    "checkJs": false,
+    "incremental": true,
+    "declaration": true,
+    "noEmitOnError": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "isolatedModules": true,
+    "noUnusedLocals": false,
+    "preserveWatchOutput": true,
+    "declarationMap": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": false,
+    "noImplicitOverride": true,
+    "skipLibCheck": true,
+    "outDir": "./dist"
+  },
+  "exclude": ["node_modules"],
+  "include": ["src/**/*.ts", "src/types.d.ts"]
+}
