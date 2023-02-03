@@ -48,6 +48,41 @@ paths:
         404:
           description: Not Found
 
+  /balances/deposit/{userId}:
+    post:
+      summary: Deposit money to a user's balance
+      operationId: depositBalance
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+              properties:
+                amount:
+                  type: number
+                  minimum: 0
+                  maximum: 9999999999
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad Request
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not Found
+
   /jobs/unpaid:
     get:
       summary: Get all unpaid jobs for active contracts of the current user (either as a client or contractor)

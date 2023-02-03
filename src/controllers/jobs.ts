@@ -16,7 +16,7 @@ jobsRouter.get('/unpaid', getProfile, async (req, res) => {
 })
 
 /**
- * @returns all non-terminated contracts for a user (either as a contractor or a client)
+ * Pays a job
  */
 jobsRouter.post('/:job_id/pay', getProfile, async (req, res) => {
   const { jobService } = req
