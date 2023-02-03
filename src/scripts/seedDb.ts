@@ -1,13 +1,13 @@
 import { Contract, Job, Profile } from '../models'
+import { syncAll } from '../models/SyncAll'
 
 /* WARNING THIS WILL DROP THE CURRENT DATABASE */
 void seed()
 
 async function seed() {
   // create tables
-  await Profile.sync({ force: true })
-  await Contract.sync({ force: true })
-  await Job.sync({ force: true })
+  await syncAll({ force: true })
+
   // insert data
   await Promise.all([
     Profile.create({

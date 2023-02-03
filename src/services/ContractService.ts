@@ -1,8 +1,7 @@
-import { Op } from 'sequelize'
-
 import type { Contract } from '../models'
-import { ContractStatus } from '../models'
 import type { ProfileData } from '../types'
+
+import type { ContractRepository } from './service-contracts/ContractRepository'
 
 const isContractorOrClient = (contract: ContractDto, { id }: ProfileData) =>
   contract.ContractorId === id || contract.ClientId === id
@@ -12,23 +11,18 @@ export type ContractDto = Readonly<
 >
 
 export class ContractService {
-  constructor(private readonly contracts: typeof Contract) {}
+  constructor(private readonly contracts: ContractRepository) {}
 
   async getById(id: number): Promise<ContractDto | null> {
-    return await this.contracts.findOne({ where: { id } })
+    return await this.contracts.getById(id)
   }
 
   /**
    * Returns all non-terminated contracts for a user (either as a contractor or a client)
-   * @param userId
+   * @param profileId
    */
-  async getAllNonTerminatedByUser(userId: number): Promise<ReadonlyArray<ContractDto>> {
-    return await this.contracts.findAll({
-      where: {
-        [Op.or]: [{ ContractorId: userId }, { ClientId: userId }],
-        status: { [Op.not]: ContractStatus.Terminated },
-      },
-    })
+  async getAllNonTerminatedByUser(profileId: number): Promise<ReadonlyArray<ContractDto>> {
+    return await this.contracts.getAllNonTerminatedByUser(profileId)
   }
 
   async authorize(

@@ -1,7 +1,7 @@
 import express from 'express'
 
 import { getProfile } from '../middleware/getProfile'
-import type { ContractService } from '../services/contract-service'
+import type { ContractService } from '../services/ContractService'
 
 const contractsRouter = express.Router()
 

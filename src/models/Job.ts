@@ -46,5 +46,5 @@ Job.init(
       type: DataTypes.DATE,
     },
   },
-  { sequelize, modelName: 'Job' },
+  { sequelize, modelName: 'Job', indexes: [{ fields: ['paid'] }] },
 )

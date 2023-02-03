@@ -1,17 +1,15 @@
 import type { RequestHandler } from 'express'
 
-import type { Models } from '../models'
-
 export const getProfile: RequestHandler = async (req, res, next) => {
-  const { Profile } = req.app.get('models') as Models
+  const { profileService } = req
 
-  const profileId = req.header('profile_id')
+  const profileId = parseInt(req.header('profile_id') ?? '')
 
-  if (!profileId) {
+  if (!profileId || isNaN(profileId)) {
     return res.status(401).end()
   }
 
-  const profile = await Profile.findOne({ where: { id: profileId } })
+  const profile = await profileService.getById(profileId)
 
   if (!profile) return res.status(401).end()
 
