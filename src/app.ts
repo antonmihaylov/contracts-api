@@ -1,6 +1,9 @@
 import bodyParser from 'body-parser'
 import type { RequestHandler } from 'express'
 import express from 'express'
+import swaggerUi from 'swagger-ui-express'
+import YAML from 'yamljs'
+
 import 'express-async-errors'
 
 import adminRouter from './controllers/admin'
@@ -28,6 +31,15 @@ export function createApp({
 
   app.use(transactionMiddleware)
   app.use(appServices)
+
+  const openApiSpec = YAML.load('./openapi.yaml') as never
+  app.use(
+    '/swagger',
+    swaggerUi.serve,
+    swaggerUi.setup(openApiSpec, {
+      swaggerOptions: {},
+    }),
+  )
 
   app.use(openApiValidator)
 

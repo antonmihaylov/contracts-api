@@ -254,3 +254,6 @@ components:
           nullable: true
         ContractId:
           type: integer
+
+security:
+  - ProfileIdAuth: []

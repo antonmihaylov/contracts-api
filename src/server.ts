@@ -5,7 +5,10 @@ async function init() {
   const app = createApp()
 
   try {
-    app.listen(PORT, () => console.log(`Express App Listening on Port ${PORT}`))
+    app.listen(PORT, () => {
+      console.log(`Express App Listening on Port ${PORT}`)
+      console.log(`Swagger UI available at http://localhost:${PORT}/swagger`)
+    })
   } catch (error) {
     console.error(`An error occurred: ${JSON.stringify(error)}`)
     process.exit(1)
