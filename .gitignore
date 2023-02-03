@@ -1,5 +1,6 @@
 .DS_STORE
 database.sqlite3
+database.test.sqlite3
 dist/
 
 

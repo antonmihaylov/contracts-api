@@ -1,7 +1,8 @@
-import app from './app'
+import { createApp } from './app'
 
 async function init() {
   const PORT = process.env.PORT ?? 3001
+  const app = createApp()
 
   try {
     app.listen(PORT, () => console.log(`Express App Listening on Port ${PORT}`))

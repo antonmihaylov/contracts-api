@@ -23,7 +23,6 @@ export class Profile extends Model<InferAttributes<Profile>, InferCreationAttrib
 
   declare type?: CreationOptional<ProfileType | null>
 }
-
 Profile.init(
   {
     id: {

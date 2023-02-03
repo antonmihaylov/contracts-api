@@ -1,6 +1,5 @@
 import type { RequestHandler } from 'express'
-
-import { sequelize } from '../models/Sequelize'
+import type { Sequelize } from 'sequelize'
 
 const mutatingMethods = new Set(['POST', 'PUT', 'PATCH', 'DELETE'])
 
@@ -10,6 +9,7 @@ const mutatingMethods = new Set(['POST', 'PUT', 'PATCH', 'DELETE'])
  */
 export const transactionMiddleware: RequestHandler = async (req, res, next) => {
   if (mutatingMethods.has(req.method)) {
+    const sequelize = req.app.get('sequelize') as Sequelize
     req.transaction = await sequelize.transaction()
 
     const oldSend = res.send

@@ -46,6 +46,7 @@ export class SqlProfileRepository implements ProfileRepository {
           },
         ],
       },
+      transaction: this.transaction,
     })
 
     return data.length > 0 ? data[0].profession : null
@@ -81,6 +82,7 @@ export class SqlProfileRepository implements ProfileRepository {
           },
         ],
       },
+      transaction: this.transaction,
     })
 
     return data.map((client) => ({

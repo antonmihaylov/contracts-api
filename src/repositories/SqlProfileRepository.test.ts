@@ -1,5 +1,7 @@
+import type { Transaction } from 'sequelize'
+
 import { Contract, ContractStatus, Job, Profile } from '../models'
-import { syncAll } from '../models/SyncAll'
+import { sequelize } from '../models/Sequelize'
 
 import { SqlProfileRepository } from './SqlProfileRepository'
 
@@ -9,85 +11,121 @@ describe('SqlJobRepository integration tests', () => {
   let client1: Profile
   let client2: Profile
 
+  let transaction: Transaction
   let repository: SqlProfileRepository
 
-  beforeEach(async () => {
-    await syncAll({ force: true })
+  beforeAll(async () => {
+    transaction = await sequelize.transaction()
 
-    repository = new SqlProfileRepository(Profile, Job, Contract)
+    repository = new SqlProfileRepository(Profile, Job, Contract, transaction)
 
-    contractor1 = await Profile.create({
-      balance: 0,
-      firstName: 'John',
-      lastName: 'Doe',
-      type: 'contractor',
-      profession: 'Developer',
-    })
+    contractor1 = await Profile.create(
+      {
+        balance: 0,
+        firstName: 'John',
+        lastName: 'Doe',
+        type: 'contractor',
+        profession: 'Developer',
+      },
+      { transaction },
+    )
 
-    contractor2 = await Profile.create({
-      balance: 0,
-      firstName: 'John',
-      lastName: 'Doe',
-      type: 'contractor',
-      profession: 'Designer',
-    })
-    client1 = await Profile.create({
-      balance: 0,
-      firstName: 'John',
-      lastName: 'Doe',
-      type: 'client',
-      profession: 'Client',
-    })
-    client2 = await Profile.create({
-      balance: 0,
-      firstName: 'Jane',
-      lastName: 'Doe',
-      type: 'client',
-      profession: 'Client',
-    })
+    contractor2 = await Profile.create(
+      {
+        balance: 0,
+        firstName: 'John',
+        lastName: 'Doe',
+        type: 'contractor',
+        profession: 'Designer',
+      },
+      { transaction },
+    )
+    client1 = await Profile.create(
+      {
+        balance: 0,
+        firstName: 'John',
+        lastName: 'Doe',
+        type: 'client',
+        profession: 'Client',
+      },
+      { transaction },
+    )
+    client2 = await Profile.create(
+      {
+        balance: 0,
+        firstName: 'Jane',
+        lastName: 'Doe',
+        type: 'client',
+        profession: 'Client',
+      },
+      { transaction },
+    )
 
-    const contract1 = await Contract.create({
-      terms: 'terms',
-      status: ContractStatus.InProgress,
-      ContractorId: contractor1.id,
-      ClientId: client1.id,
-    })
+    const contract1 = await Contract.create(
+      {
+        terms: 'terms',
+        status: ContractStatus.InProgress,
+        ContractorId: contractor1.id,
+        ClientId: client1.id,
+      },
+      { transaction },
+    )
 
-    const contract2 = await Contract.create({
-      terms: 'terms',
-      status: ContractStatus.InProgress,
-      ContractorId: contractor1.id,
-      ClientId: client2.id,
-    })
+    const contract2 = await Contract.create(
+      {
+        terms: 'terms',
+        status: ContractStatus.InProgress,
+        ContractorId: contractor1.id,
+        ClientId: client2.id,
+      },
+      { transaction },
+    )
 
-    await Job.create({
-      description: 'job1',
-      price: 100,
-      ContractId: contract1.id,
-      paid: true,
-      paymentDate: new Date(),
-    })
-    await Job.create({
-      description: 'job2',
-      price: 200,
-      ContractId: contract2.id,
-      paid: true,
-      paymentDate: new Date(),
-    })
+    await Job.create(
+      {
+        description: 'job1',
+        price: 100,
+        ContractId: contract1.id,
+        paid: true,
+        paymentDate: new Date(),
+      },
+      { transaction },
+    )
+    await Job.create(
+      {
+        description: 'job2',
+        price: 200,
+        ContractId: contract2.id,
+        paid: true,
+        paymentDate: new Date(),
+      },
+      { transaction },
+    )
 
-    const contract3 = await Contract.create({
-      terms: 'terms',
-      status: ContractStatus.InProgress,
-      ContractorId: contractor2.id,
-      ClientId: client2.id,
-    })
-    await Job.create({
-      description: 'job3',
-      price: 100,
-      ContractId: contract3.id,
-      paid: true,
-      paymentDate: new Date(),
-    })
+    const contract3 = await Contract.create(
+      {
+        terms: 'terms',
+        status: ContractStatus.InProgress,
+        ContractorId: contractor2.id,
+        ClientId: client2.id,
+      },
+      { transaction },
+    )
+    await Job.create(
+      {
+        description: 'job3',
+        price: 100,
+        ContractId: contract3.id,
+        paid: true,
+        paymentDate: new Date(),
+      },
+      { transaction },
+    )
+  })
+
+  afterAll(async () => {
+    await transaction.rollback()
+    await sequelize.close()
   })
 
   it('should get best profession', async () => {

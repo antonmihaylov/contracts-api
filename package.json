@@ -15,12 +15,12 @@
   },
   "scripts": {
     "build": "tsc",
-    "start": "dotenv -c tsc-watch --onSuccess \"node dist/server.js\"",
+    "start": "dotenv -c -- tsc-watch --onSuccess \"node dist/server.js\"",
     "start:prod": "node dist/server.js",
-    "seed": "dotenv -c npm run build && node dist/scripts/seedDb.js",
+    "seed": "dotenv -c -- npm run build && node dist/scripts/seedDb.js",
     "lint": "eslint --ext .js,ts,jsx,tsx,cjs .",
     "format": "prettier --loglevel warn --write '*.{js,ts,jsx,tsx,json,md,yaml,yml,cjs}'",
-    "test": "dotenv  -c -v NODE_ENV=test jest --config jest.config.js",
+    "test": "dotenv  -c -v NODE_ENV=test jest --config jest.config.js --forceExit",
     "prepare": "husky install"
   },
   "devDependencies": {
@@ -34,6 +34,7 @@
     "@typescript-eslint/eslint-plugin": "5.50.0",
     "@typescript-eslint/parser": "5.50.0",
     "concurrently": "7.6.0",
+    "dotenv": "^16.0.3",
     "dotenv-cli": "^7.0.0",
     "eslint": "8.33.0",
     "eslint-config-antomic": "2.1.0",

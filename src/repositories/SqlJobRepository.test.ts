@@ -1,5 +1,7 @@
+import type { Transaction } from 'sequelize'
+
 import { Contract, ContractStatus, Job, Profile } from '../models'
-import { syncAll } from '../models/SyncAll'
+import { sequelize } from '../models/Sequelize'
 
 import { SqlJobRepository } from './SqlJobRepository'
 
@@ -10,71 +12,100 @@ describe('SqlJobRepository integration tests', () => {
   let contractor: Profile
   let client: Profile
 
+  let transaction: Transaction
   let repository: SqlJobRepository
 
-  beforeEach(async () => {
-    await syncAll({ force: true })
+  beforeAll(async () => {
+    transaction = await sequelize.transaction()
+    repository = new SqlJobRepository(Job, Contract, transaction)
 
-    repository = new SqlJobRepository(Job, Contract)
+    client = await Profile.create(
+      {
+        balance: 0,
+        firstName: 'John',
+        lastName: 'Doe',
+        type: 'client',
+        profession: 'Banker',
+      },
+      { transaction },
+    )
 
-    client = await Profile.create({
-      balance: 0,
-      firstName: 'John',
-      lastName: 'Doe',
-      type: 'client',
-      profession: 'Banker',
-    })
+    contractor = await Profile.create(
+      {
+        balance: 0,
+        firstName: 'John',
+        lastName: 'Doe',
+        type: 'contractor',
+        profession: 'Developer',
+      },
+      { transaction },
+    )
 
-    contractor = await Profile.create({
-      balance: 0,
-      firstName: 'John',
-      lastName: 'Doe',
-      type: 'contractor',
-      profession: 'Developer',
-    })
+    activeContract = await Contract.create(
+      {
+        terms: 'terms',
+        status: ContractStatus.InProgress,
+        ContractorId: contractor.id,
+        ClientId: client.id,
+      },
+      { transaction },
+    )
 
-    activeContract = await Contract.create({
-      terms: 'terms',
-      status: ContractStatus.InProgress,
-      ContractorId: contractor.id,
-      ClientId: client.id,
-    })
+    terminatedContract = await Contract.create(
+      {
+        terms: 'terms',
+        status: ContractStatus.Terminated,
+        ContractorId: contractor.id,
+        ClientId: client.id,
+      },
+      { transaction },
+    )
 
-    terminatedContract = await Contract.create({
-      terms: 'terms',
-      status: ContractStatus.Terminated,
-      ContractorId: contractor.id,
-      ClientId: client.id,
-    })
+    newContract = await Contract.create(
+      {
+        terms: 'terms',
+        status: ContractStatus.New,
+        ContractorId: contractor.id,
+        ClientId: client.id,
+      },
+      { transaction },
+    )
+  })
 
-    newContract = await Contract.create({
-      terms: 'terms',
-      status: ContractStatus.New,
-      ContractorId: contractor.id,
-      ClientId: client.id,
-    })
+  afterAll(async () => {
+    await transaction.rollback()
+    await sequelize.close()
   })
 
   it('should get all unpaid jobs for active contracts', async () => {
-    const activeJob = await Job.create({
-      description: 'job1',
-      price: 100,
-      ContractId: activeContract.id,
-    })
+    const activeJob = await Job.create(
+      {
+        description: 'job1',
+        price: 100,
+        ContractId: activeContract.id,
+      },
+      { transaction },
+    )
 
     // A terminated contract should not be included
-    await Job.create({
-      description: 'job2',
-      price: 100,
-      ContractId: terminatedContract.id,
-    })
+    await Job.create(
+      {
+        description: 'job2',
+        price: 100,
+        ContractId: terminatedContract.id,
+      },
+      { transaction },
+    )
 
     // A new contract should not be included
-    await Job.create({
-      description: 'job3',
-      price: 100,
-      ContractId: newContract.id,
-    })
+    await Job.create(
+      {
+        description: 'job3',
+        price: 100,
+        ContractId: newContract.id,
+      },
+      { transaction },
+    )
 
     const unpaidJobs = await repository.getAllUnpaidActive(contractor.id)
 
@@ -89,11 +120,14 @@ describe('SqlJobRepository integration tests', () => {
   })
 
   it('should update a job and get a job by id', async () => {
-    const job = await Job.create({
-      description: 'job1',
-      price: 100,
-      ContractId: activeContract.id,
-    })
+    const job = await Job.create(
+      {
+        description: 'job1',
+        price: 100,
+        ContractId: activeContract.id,
+      },
+      { transaction },
+    )
 
     job.paid = true
 

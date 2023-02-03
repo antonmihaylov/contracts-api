@@ -1,24 +1,33 @@
-// Need to improve those tests
+import type { Transaction } from 'sequelize'
 import supertest from 'supertest'
 
-import app from '../app'
 import { Contract, Job, Profile } from '../models'
-import { syncAll } from '../models/SyncAll'
+import { sequelize } from '../models/Sequelize'
+import { createTestApp } from '../testApp'
 
+// Need to improve those tests
 describe('Jobs API tests', () => {
   let contractorProfile: Profile
+  let app: ReturnType<typeof createTestApp>
+  let transaction: Transaction
 
   beforeAll(async () => {
-    await syncAll({ force: true })
+    transaction = await sequelize.transaction()
+    app = createTestApp(transaction)
 
-    contractorProfile = await Profile.create({
-      type: 'contractor',
-      balance: 0,
-      firstName: 'Jane',
-      lastName: 'Doe',
-      profession: 'developer',
-    })
+    contractorProfile = await Profile.create(
+      {
+        type: 'contractor',
+        balance: 0,
+        firstName: 'Jane',
+        lastName: 'Doe',
+        profession: 'developer',
+      },
+      { transaction },
+    )
   })
+
+  afterAll(() => transaction.rollback())
 
   describe('GET /jobs/unpaid', () => {
     it('should return 200 ok with a list of jobs', () =>
@@ -34,26 +43,35 @@ describe('Jobs API tests', () => {
     let job: Job
     let contract: Contract
     beforeAll(async () => {
-      clientProfile = await Profile.create({
-        type: 'client',
-        balance: 150,
-        firstName: 'John',
-        lastName: 'Doe',
-        profession: 'developer',
-      })
+      clientProfile = await Profile.create(
+        {
+          type: 'client',
+          balance: 150,
+          firstName: 'John',
+          lastName: 'Doe',
+          profession: 'developer',
+        },
+        { transaction },
+      )
 
-      contract = await Contract.create({
-        status: 'new',
-        ClientId: clientProfile.id,
-        ContractorId: contractorProfile.id,
-        terms: 'terms',
-      })
+      contract = await Contract.create(
+        {
+          status: 'new',
+          ClientId: clientProfile.id,
+          ContractorId: contractorProfile.id,
+          terms: 'terms',
+        },
+        { transaction },
+      )
 
-      job = await Job.create({
-        ContractId: contract.id,
-        description: 'description',
-        price: 100,
-      })
+      job = await Job.create(
+        {
+          ContractId: contract.id,
+          description: 'description',
+          price: 100,
+        },
+        { transaction },
+      )
     })
 
     it('should return 200 ok', () =>

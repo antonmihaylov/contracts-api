@@ -1,48 +1,69 @@
+import type { Transaction } from 'sequelize'
 import supertest from 'supertest'
 
-import { default as app } from '../app'
 import { Contract, Profile } from '../models'
-import { syncAll } from '../models/SyncAll'
+import { sequelize } from '../models/Sequelize'
+import { createTestApp } from '../testApp'
 
 describe('Contracts API', () => {
   let contract: Contract
   let clientProfile: Profile
   let clientProfile2: Profile
   let contractorProfile: Profile
+  let app: ReturnType<typeof createTestApp>
+  let transaction: Transaction
 
   beforeAll(async () => {
-    await syncAll({ force: true })
+    transaction = await sequelize.transaction()
+    app = createTestApp(transaction)
 
-    clientProfile = await Profile.create({
-      type: 'client',
-      balance: 0,
-      firstName: 'John',
-      lastName: 'Doe',
-      profession: 'developer',
-    })
+    clientProfile = await Profile.create(
+      {
+        type: 'client',
+        balance: 0,
+        firstName: 'John',
+        lastName: 'Doe',
+        profession: 'developer',
+      },
+      { transaction },
+    )
 
-    contractorProfile = await Profile.create({
-      type: 'contractor',
-      balance: 0,
-      firstName: 'Jane',
-      lastName: 'Doe',
-      profession: 'developer',
-    })
+    contractorProfile = await Profile.create(
+      {
+        type: 'contractor',
+        balance: 0,
+        firstName: 'Jane',
+        lastName: 'Doe',
+        profession: 'developer',
+      },
+      { transaction },
+    )
 
-    contract = await Contract.create({
-      status: 'new',
-      ClientId: clientProfile.id,
-      ContractorId: contractorProfile.id,
-      terms: 'terms',
-    })
+    contract = await Contract.create(
+      {
+        status: 'new',
+        ClientId: clientProfile.id,
+        ContractorId: contractorProfile.id,
+        terms: 'terms',
+      },
+      { transaction },
+    )
 
-    clientProfile2 = await Profile.create({
-      type: 'client',
-      balance: 0,
-      firstName: 'John',
-      lastName: 'Doe',
-      profession: 'developer',
-    })
+    clientProfile2 = await Profile.create(
+      {
+        type: 'client',
+        balance: 0,
+        firstName: 'John',
+        lastName: 'Doe',
+        profession: 'developer',
+      },
+      { transaction },
+    )
+  })
+
+  afterAll(async () => {
+    await transaction.rollback()
+    await sequelize.close()
   })
 
   describe('GET /contracts', () => {

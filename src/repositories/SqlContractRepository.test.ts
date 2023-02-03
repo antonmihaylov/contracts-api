@@ -1,5 +1,7 @@
+import type { Transaction } from 'sequelize'
+
 import { Contract, Profile } from '../models'
-import { syncAll } from '../models/SyncAll'
+import { sequelize } from '../models/Sequelize'
 
 import { SqlContractRepository } from './SqlContractRepository'
 
@@ -9,50 +11,71 @@ describe('SqlContractRepository integration tests', () => {
   let clientProfile2: Profile
   let contractorProfile: Profile
 
+  let transaction: Transaction
   let repository: SqlContractRepository
 
   beforeAll(async () => {
-    await syncAll({ force: true })
+    transaction = await sequelize.transaction()
 
-    clientProfile = await Profile.create({
-      type: 'client',
-      balance: 0,
-      firstName: 'John',
-      lastName: 'Doe',
-      profession: 'developer',
-    })
+    clientProfile = await Profile.create(
+      {
+        type: 'client',
+        balance: 0,
+        firstName: 'John',
+        lastName: 'Doe',
+        profession: 'developer',
+      },
+      { transaction },
+    )
 
-    clientProfile2 = await Profile.create({
-      type: 'client',
-      balance: 0,
-      firstName: 'John',
-      lastName: 'Doe',
-      profession: 'developer',
-    })
+    clientProfile2 = await Profile.create(
+      {
+        type: 'client',
+        balance: 0,
+        firstName: 'John',
+        lastName: 'Doe',
+        profession: 'developer',
+      },
+      { transaction },
+    )
 
-    contractorProfile = await Profile.create({
-      type: 'contractor',
-      balance: 0,
-      firstName: 'Jane',
-      lastName: 'Doe',
-      profession: 'developer',
-    })
+    contractorProfile = await Profile.create(
+      {
+        type: 'contractor',
+        balance: 0,
+        firstName: 'Jane',
+        lastName: 'Doe',
+        profession: 'developer',
+      },
+      { transaction },
+    )
 
-    contract1 = await Contract.create({
-      status: 'new',
-      ClientId: clientProfile.id,
-      ContractorId: contractorProfile.id,
-      terms: 'terms',
-    })
+    contract1 = await Contract.create(
+      {
+        status: 'new',
+        ClientId: clientProfile.id,
+        ContractorId: contractorProfile.id,
+        terms: 'terms',
+      },
+      { transaction },
+    )
 
-    await Contract.create({
-      status: 'terminated',
-      ClientId: clientProfile.id,
-      ContractorId: contractorProfile.id,
-      terms: 'terms',
-    })
+    await Contract.create(
+      {
+        status: 'terminated',
+        ClientId: clientProfile.id,
+        ContractorId: contractorProfile.id,
+        terms: 'terms',
+      },
+      { transaction },
+    )
 
-    repository = new SqlContractRepository(Contract)
+    repository = new SqlContractRepository(Contract, transaction)
+  })
+
+  afterAll(async () => {
+    await transaction.rollback()
+    await sequelize.close()
   })
 
   it('should get all non-terminated user contracts for a client', () =>

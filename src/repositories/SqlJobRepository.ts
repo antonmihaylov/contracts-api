@@ -13,7 +13,9 @@ export class SqlJobRepository implements JobRepository {
   ) {}
 
   async getById(jobId: number): Promise<Job | null> {
-    return await this.jobModel.findByPk(jobId)
+    return await this.jobModel.findByPk(jobId, {
+      transaction: this.transaction,
+    })
   }
 
   async getAllUnpaidActive(profileId: number): Promise<ReadonlyArray<Job>> {

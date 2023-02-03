@@ -55,7 +55,7 @@ describe('Job Service', () => {
     const jobRepository = new InMemoryJobRepository([job])
     const profileRepository = new InMemoryProfileRepository([client, contractor])
     const contractRepository = new InMemoryContractRepository([contract])
-    const profileService = new ProfileService(profileRepository)
+    const profileService = new ProfileService(profileRepository, jobRepository)
 
     const jobService = new JobService(
       jobRepository,
@@ -88,7 +88,7 @@ describe('Job Service', () => {
     const jobRepository = new InMemoryJobRepository([job])
     const profileRepository = new InMemoryProfileRepository([client, contractor])
     const contractRepository = new InMemoryContractRepository([contract])
-    const profileService = new ProfileService(profileRepository)
+    const profileService = new ProfileService(profileRepository, jobRepository)
 
     const jobService = new JobService(
       jobRepository,

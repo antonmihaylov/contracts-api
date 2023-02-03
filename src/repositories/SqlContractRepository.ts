@@ -12,7 +12,7 @@ export class SqlContractRepository implements ContractRepository {
   ) {}
 
   async getById(id: number): Promise<Contract | null> {
-    return await this.contracts.findOne({ where: { id } })
+    return await this.contracts.findOne({ where: { id }, transaction: this.transaction })
   }
 
   async getAllNonTerminatedByUser(profileId: number): Promise<ReadonlyArray<Contract>> {

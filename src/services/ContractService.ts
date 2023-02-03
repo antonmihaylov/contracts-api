@@ -1,9 +1,9 @@
 import type { Contract } from '../models'
-import type { ProfileData } from '../types'
 
+import type { ProfileDto } from './ProfileService'
 import type { ContractRepository } from './service-contracts/ContractRepository'
 
-const isContractorOrClient = (contract: ContractDto, { id }: ProfileData) =>
+const isContractorOrClient = (contract: ContractDto, { id }: ProfileDto) =>
   contract.ContractorId === id || contract.ClientId === id
 
 export type ContractDto = Readonly<
@@ -25,10 +25,7 @@ export class ContractService {
     return await this.contracts.getAllNonTerminatedByUser(profileId)
   }
 
-  async authorize(
-    contract: ContractDto,
-    profile: ProfileData | undefined | null,
-  ): Promise<boolean> {
+  async authorize(contract: ContractDto, profile: ProfileDto | undefined | null): Promise<boolean> {
     return !!profile && isContractorOrClient(contract, profile)
   }
 }
