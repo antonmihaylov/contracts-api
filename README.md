@@ -2,6 +2,7 @@
 
 - In a real setting I would consider including TypeScript only if I know that most of the team that will work one this code is familiar with it or wants to learn it
 - Tests do not cover everything, there are more functional, integration and unit tests that can be added. For the sake of time I decided to demonstrate a few tests of each kind
+- Time spent: ~4 hours, excluding time spent on learning sequelize
 
 # DEEL BACKEND TASK
 
