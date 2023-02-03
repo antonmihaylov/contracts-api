@@ -3,6 +3,7 @@ import createError from 'http-errors'
 import type { Profile, Job } from '../models'
 import { ProfileType } from '../models'
 
+import type { BestClientDto } from './service-contracts/BestClientDto'
 import type { JobRepository } from './service-contracts/JobRepository'
 import type { ProfileRepository } from './service-contracts/ProfileRepository'
 
@@ -19,6 +20,14 @@ export class ProfileService {
 
   async getById(id: number): Promise<ProfileDto | null> {
     return await this.profiles.getById(id)
+  }
+
+  async getBestProfession(startRange: Date, endRange: Date): Promise<string | null> {
+    return await this.profiles.getBestProfession(startRange, endRange)
+  }
+
+  async getBestClients(startRange: Date, endRange: Date, limit = 2): Promise<Array<BestClientDto>> {
+    return await this.profiles.getBestClients(startRange, endRange, limit)
   }
 
   async depositBalance(clientId: number, amount: number): Promise<void> {

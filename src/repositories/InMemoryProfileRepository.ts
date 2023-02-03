@@ -1,4 +1,5 @@
 import type { Profile } from '../models'
+import type { BestClientDto } from '../services/service-contracts/BestClientDto'
 import type { ProfileRepository } from '../services/service-contracts/ProfileRepository'
 
 export class InMemoryProfileRepository implements ProfileRepository {
@@ -18,5 +19,15 @@ export class InMemoryProfileRepository implements ProfileRepository {
       profile.balance = balance
       this.profiles.set(id, profile)
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getBestClients(startRange: Date, endRange: Date, limit: number): Promise<Array<BestClientDto>> {
+    throw new Error('Method not implemented.')
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getBestProfession(startRange: Date, endRange: Date): Promise<string | null> {
+    throw new Error('Method not implemented.')
   }
 }

@@ -11,7 +11,7 @@ import { ProfileService } from '../services/ProfileService'
 export const appServices: RequestHandler = async (req, res, next) => {
   const contractRepository = new SqlContractRepository(Contract, req.transaction)
   const jobRepository = new SqlJobRepository(Job, Contract, req.transaction)
-  const profileRepository = new SqlProfileRepository(Profile, req.transaction)
+  const profileRepository = new SqlProfileRepository(Profile, Job, Contract, req.transaction)
 
   req.profileService = new ProfileService(profileRepository, jobRepository)
   req.contractService = new ContractService(contractRepository)

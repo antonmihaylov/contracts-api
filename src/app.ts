@@ -2,6 +2,7 @@ import bodyParser from 'body-parser'
 import express from 'express'
 import 'express-async-errors'
 
+import adminRouter from './controllers/admin'
 import balancesRouter from './controllers/balances'
 import contractsRouter from './controllers/contracts'
 import jobsRouter from './controllers/jobs'
@@ -21,6 +22,7 @@ app.use(openApiValidator)
 app.use('/contracts', contractsRouter)
 app.use('/jobs', jobsRouter)
 app.use('/balances', balancesRouter)
+app.use('/admin', adminRouter)
 
 app.use(errorHandler)
 

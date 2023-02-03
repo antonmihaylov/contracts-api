@@ -11,6 +11,7 @@ export class InMemoryJobRepository implements JobRepository {
     this.jobs = new Map(jobs.map((job) => [job.id, job]))
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- This is a mock
   async getAllUnpaidActive(profileId: number): Promise<ReadonlyArray<Job>> {
     // This doesn't work exactly, because we don't have the contract, but it's good enough for tests
     return [...this.jobs.values()]

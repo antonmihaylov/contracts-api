@@ -5,7 +5,6 @@ import { SqlContractRepository } from './SqlContractRepository'
 
 describe('SqlContractRepository integration tests', () => {
   let contract1: Contract
-  let contractTerminated: Contract
   let clientProfile: Profile
   let clientProfile2: Profile
   let contractorProfile: Profile
@@ -46,7 +45,7 @@ describe('SqlContractRepository integration tests', () => {
       terms: 'terms',
     })
 
-    contractTerminated = await Contract.create({
+    await Contract.create({
       status: 'terminated',
       ClientId: clientProfile.id,
       ContractorId: contractorProfile.id,
