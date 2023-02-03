@@ -29,9 +29,6 @@ export function createApp({
 
   app.set('sequelize', sequelize)
 
-  app.use(transactionMiddleware)
-  app.use(appServices)
-
   const openApiSpec = YAML.load('./openapi.yaml') as never
   app.use(
     '/swagger',
@@ -42,6 +39,9 @@ export function createApp({
   )
 
   app.use(openApiValidator)
+
+  app.use(transactionMiddleware)
+  app.use(appServices)
 
   app.use('/contracts', contractsRouter)
   app.use('/jobs', jobsRouter)

@@ -106,7 +106,10 @@ describe('Contracts API', () => {
         ))
 
     it('should get 400 if the id is not valid', () =>
-      supertest(app).get(`/contracts/blabla`).expect(400))
+      supertest(app)
+        .get(`/contracts/blabla`)
+        .set('profile_id', clientProfile2.id.toString())
+        .expect(400))
 
     it('should get 401 if not authenticated', () =>
       supertest(app).get(`/contracts/${contract.id}`).expect(401))
