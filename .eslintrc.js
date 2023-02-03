@@ -3,7 +3,7 @@ module.exports = {
   extends: ['antomic/recommended'],
   parserOptions: {
     tsconfigRootDir: __dirname,
-    project: './tsconfig.json',
+    project: ['./tsconfig.json', './tsconfig.test.json'],
   },
   rules: {
     // Handled by TypeScript

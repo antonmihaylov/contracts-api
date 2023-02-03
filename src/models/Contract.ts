@@ -15,6 +15,7 @@ export const ContractStatus = {
   InProgress: 'in_progress',
   Terminated: 'terminated',
 } as const
+
 export type ContractStatus = (typeof ContractStatus)[keyof typeof ContractStatus]
 
 export class Contract extends Model<InferAttributes<Contract>, InferCreationAttributes<Contract>> {
@@ -44,7 +45,11 @@ Contract.init(
       type: DataTypes.ENUM(...Object.values(ContractStatus)),
     },
   },
-  { sequelize, modelName: 'Contract' },
+  {
+    sequelize,
+    modelName: 'Contract',
+    indexes: [{ unique: false, fields: ['status'] }],
+  },
 )
 
 Contract.hasMany(Job)
